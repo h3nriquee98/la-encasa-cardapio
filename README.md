@@ -35,14 +35,10 @@ Para trocar ou adicionar fotos, coloque os arquivos `.jpg` em `public/images/pro
 
 ## Publicar
 
-O site fica no **GitHub Pages**. Depois de editar o cardápio ou qualquer arquivo, publique com:
+O site está na **Vercel** (https://laencasacardapio.vercel.app), ligada a este repositório do GitHub. A cada `git push` na branch `main`, a Vercel publica a nova versão sozinha em 1–2 minutos:
 
 ```bash
-npm run deploy
+git add -A
+git commit -m "Descreva a alteração"
+git push
 ```
-
-O comando gera o site estático (pasta `out/`) e envia para a branch `gh-pages`. A atualização aparece em 1–2 minutos. Lembre de também salvar o código com `git add -A`, `git commit` e `git push`.
-
-Endereço: https://h3nriquee98.github.io/la-encasa-cardapio/
-
-Para usar um domínio próprio, configure em *Settings → Pages* do repositório e ajuste `NEXT_PUBLIC_BASE_PATH` (vazio) e `NEXT_PUBLIC_SITE_URL` (o domínio) em `scripts/deploy.mjs`.
