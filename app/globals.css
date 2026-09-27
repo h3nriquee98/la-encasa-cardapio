@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/*
+  Paleta tirada do logo e do cardápio impresso da La Encasa:
+  pão/cheddar laranja, tomate/ketchup vermelho, marrom do hambúrguer e o papel da bandeja.
+*/
+@theme inline {
+  --color-paper: #fffaf2;
+  --color-crust: #f2e2c8;
+  --color-bun: #fbeed6;
+  --color-cheddar: #f7a814;
+  --color-cheddar-deep: #de8600;
+  --color-ketchup: #d52b1e;
+  --color-ketchup-deep: #ae1f14;
+  --color-patty: #2a150c;
+  --color-cocoa: #6b4632;
+  --color-ember: #170b06;
+  --color-lettuce: #2e9a52;
+  --color-whatsapp: #25d366;
+
+  --font-display: var(--font-ultra), "Rockwell Extra Bold", Georgia, serif;
+  --font-sans: var(--font-figtree), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --shadow-card: 0 1px 2px rgb(42 21 12 / 0.06), 0 8px 24px -12px rgb(42 21 12 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(42 21 12 / 0.08), 0 18px 40px -16px rgb(42 21 12 / 0.35);
+
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-pop: pop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fade: fade 0.25s ease-out both;
+  --animate-sheet: sheet 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-dialog: dialog 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheet {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@keyframes dialog {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hero-settle {
+  from { scale: 1.07; }
+  to { scale: 1; }
+}
+@keyframes hero-line {
+  from { opacity: 0.2; transform: translateY(0.28em); filter: blur(10px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (min-width: 640px) {
+    html {
+      scroll-padding-top: 4.5rem;
+    }
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-patty);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-cheddar);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Borda serrilhada de comanda (ticket de pedido) em cima e embaixo */
+  .ticket-edge {
+    --tooth: 8px;
+    mask:
+      linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--tooth)) no-repeat,
+      conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / calc(var(--tooth) * 2) var(--tooth) repeat-x,
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(var(--tooth) * 2) var(--tooth) repeat-x;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .pb-safe {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+  Hero
+  Celular / tablet em pé: foto em cima (o hambúrguer ocupa a largura), texto embaixo.
+  Desktop / tablet deitado: foto espelhada à direita. A posição é calculada para que a
+  borda interna do hambúrguer (41% da foto espelhada) caia em --burger-l, sempre à
+  direita da coluna de texto; em telas largas o hambúrguer encosta na borda direita.
+*/
+@layer components {
+  .hero-media {
+    position: relative;
+    height: clamp(300px, min(94vw, 56svh), 660px);
+    overflow: hidden;
+  }
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: 0% 50%;
+    animation: hero-settle 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .hero-shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgb(23 11 6 / 0.85), rgb(23 11 6 / 0.4) 14%, transparent 28%),
+      linear-gradient(to top, var(--color-ember) 0%, rgb(23 11 6 / 0.55) 22%, transparent 48%);
+  }
+  .hero-content {
+    position: relative;
+    margin-top: -4.5rem;
+  }
+  .hero-title {
+    font-size: clamp(2rem, calc((100vw - 2rem) / 9.8), 4.5rem);
+    text-wrap: nowrap;
+  }
+  .hero-line {
+    animation: hero-line 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @media (min-width: 1024px), (min-width: 768px) and (orientation: landscape) {
+    .hero {
+      --hero-h: clamp(600px, 92svh, 1100px);
+      --img-w: calc(var(--hero-h) * 1.7768);
+      --burger-l: max(52%, 100% - var(--img-w) * 0.58 + 40px);
+      --img-x: calc(var(--burger-l) - var(--img-w) * 0.41);
+      min-height: var(--hero-h);
+      display: flex;
+    }
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      height: auto;
+    }
+    .hero-img {
+      inset: 0 auto 0 var(--img-x);
+      width: var(--img-w);
+      transform: scaleX(-1);
+    }
+    .hero-shade {
+      background:
+        linear-gradient(to bottom, rgb(23 11 6 / 0.7), transparent 18%),
+        linear-gradient(to top, var(--color-ember), transparent 16%),
+        linear-gradient(
+          90deg,
+          var(--color-ember) 0,
+          var(--color-ember) max(0px, var(--img-x)),
+          rgb(23 11 6 / 0.6) calc(var(--burger-l) - 160px),
+          transparent calc(var(--burger-l) + 24px)
+        );
+    }
+    .hero-content {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding-top: 88px;
+    }
+    .hero-copy {
+      max-width: min(620px, 45vw);
+    }
+    .hero-title {
+      font-size: min(4.5vw, 4rem);
+    }
+  }
+}
