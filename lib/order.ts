@@ -1,4 +1,3 @@
-import { getCategory } from "@/data/menu";
 import { site, whatsappLink } from "@/data/site";
 import { cartSubtotal, lineTotal, type CartLine } from "@/lib/cart";
 import { money, parseMoney } from "@/lib/format";
@@ -70,37 +69,38 @@ export function validateCustomer(c: Customer, total: number): Errors {
   return e;
 }
 
-const LINE = "━━━━━━━━━━━━━━";
+// Só texto, sem emojis nem símbolos especiais: o link do WhatsApp corrompe emojis
+// em alguns aparelhos (aparecem como "�"). O negrito usa *asteriscos* do WhatsApp.
+const LINE = "------------------------------";
 
 export function buildOrderMessage(lines: CartLine[], c: Customer) {
   const { subtotal, fee, total } = orderTotals(lines, c.fulfillment);
   const out: string[] = [];
 
-  out.push("🍔 *NOVO PEDIDO - LA ENCASA*", "");
-  out.push(`👤 *Cliente:* ${c.name.trim()}`);
-  out.push(`📱 *Telefone:* ${c.phone}`, "");
-  out.push("📦 *Pedido:*", "");
+  out.push("*NOVO PEDIDO - LA ENCASA*", "");
+  out.push(`*Cliente:* ${c.name.trim()}`);
+  out.push(`*Telefone:* ${c.phone}`, "");
+  out.push("*PEDIDO*", "");
 
   for (const l of lines) {
-    const emoji = getCategory(l.category).emoji;
-    out.push(`${emoji} *${l.qty}x ${l.name}*`);
-    for (const o of l.options) out.push(`• ${o.group}: ${o.label}`);
-    for (const a of l.addons) out.push(`• Adicional: ${a.qty > 1 ? `${a.qty}x ` : ""}${a.name}`);
-    for (const r of l.removed) out.push(`• Sem ${r.toLowerCase()}`);
-    if (l.note) out.push(`• Obs.: ${l.note}`);
+    out.push(`*${l.qty}x ${l.name}*`);
+    for (const o of l.options) out.push(`- ${o.group}: ${o.label}`);
+    for (const a of l.addons) out.push(`- Adicional: ${a.qty > 1 ? `${a.qty}x ` : ""}${a.name}`);
+    for (const r of l.removed) out.push(`- Sem ${r.toLowerCase()}`);
+    if (l.note) out.push(`- Obs.: ${l.note}`);
     out.push(money(lineTotal(l)), "");
   }
 
   out.push(LINE);
-  out.push(`💰 Subtotal: ${money(subtotal)}`);
+  out.push(`Subtotal: ${money(subtotal)}`);
   if (c.fulfillment === "delivery") {
-    out.push(`🛵 Entrega: ${fee === null ? "a combinar" : money(fee)}`);
+    out.push(`Entrega: ${fee === null ? "a combinar" : money(fee)}`);
   }
-  out.push(`💵 *TOTAL: ${money(total)}*${c.fulfillment === "delivery" && fee === null ? " + entrega" : ""}`);
+  out.push(`*TOTAL: ${money(total)}*${c.fulfillment === "delivery" && fee === null ? " + entrega" : ""}`);
   out.push(LINE, "");
 
   if (c.fulfillment === "delivery") {
-    out.push("📍 *Entrega*");
+    out.push("*ENTREGA*");
     out.push(`Rua: ${c.street.trim()}`);
     out.push(`Número: ${c.number.trim()}`);
     out.push(`Bairro: ${c.neighborhood.trim()}`);
@@ -108,20 +108,20 @@ export function buildOrderMessage(lines: CartLine[], c: Customer) {
     if (c.complement.trim()) out.push(`Complemento: ${c.complement.trim()}`);
     if (c.reference.trim()) out.push(`Referência: ${c.reference.trim()}`);
   } else {
-    out.push("🏠 *Retirada no local*");
-    out.push(site.address.oneLine);
+    out.push("*RETIRADA NO LOCAL*");
+    out.push(site.address.oneLine.replace("–", "-"));
   }
   out.push("");
 
   if (c.payment) {
-    out.push(`💳 *Pagamento:* ${PAYMENT_LABEL[c.payment]}`);
+    out.push(`*Pagamento:* ${PAYMENT_LABEL[c.payment]}`);
     if (c.payment === "dinheiro") {
-      out.push(c.needsChange ? `💵 Troco para: ${money(parseMoney(c.changeFor))}` : "💵 Não precisa de troco");
+      out.push(c.needsChange ? `Troco para: ${money(parseMoney(c.changeFor))}` : "Não precisa de troco");
     }
   }
 
   if (c.notes.trim()) {
-    out.push("", "📝 *Observações:*", c.notes.trim());
+    out.push("", "*Observações:*", c.notes.trim());
   }
 
   return out.join("\n");

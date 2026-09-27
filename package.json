@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "deploy": "node scripts/deploy.mjs"
   },
   "dependencies": {
     "next": "^16.3.6",

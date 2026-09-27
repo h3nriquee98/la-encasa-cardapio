@@ -466,7 +466,6 @@ const bebidas: Product[] = [
   }),
   drink("bebidas", "suco-prats-uva", "Suco Prats Uva 900 ml", 23),
   drink("bebidas", "agua", "Água 500 ml", 4),
-  drink("bebidas", "copo-limao-gelo", "Copo com limão e gelo", 2),
 ];
 
 const cervejas: Product[] = [

@@ -35,9 +35,14 @@ Para trocar ou adicionar fotos, coloque os arquivos `.jpg` em `public/images/pro
 
 ## Publicar
 
-Funciona em qualquer hospedagem de Next.js (por exemplo, a Vercel). Na hospedagem, defina a variável `NEXT_PUBLIC_SITE_URL` com o endereço final do site (ex.: `https://www.seudominio.com.br`) para o SEO e o compartilhamento funcionarem com o link certo.
+O site fica no **GitHub Pages**. Depois de editar o cardápio ou qualquer arquivo, publique com:
 
 ```bash
-npm run build
-npm start
+npm run deploy
 ```
+
+O comando gera o site estático (pasta `out/`) e envia para a branch `gh-pages`. A atualização aparece em 1–2 minutos. Lembre de também salvar o código com `git add -A`, `git commit` e `git push`.
+
+Endereço: https://h3nriquee98.github.io/la-encasa-cardapio/
+
+Para usar um domínio próprio, configure em *Settings → Pages* do repositório e ajuste `NEXT_PUBLIC_BASE_PATH` (vazio) e `NEXT_PUBLIC_SITE_URL` (o domínio) em `scripts/deploy.mjs`.
